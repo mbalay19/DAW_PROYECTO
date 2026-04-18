@@ -10,7 +10,7 @@ BG       = RGBColor(0xF7, 0xF7, 0xF5)   # warm off-white
 DARK     = RGBColor(0x1C, 0x1C, 0x1E)   # near-black
 MID      = RGBColor(0x6E, 0x6E, 0x73)   # mid grey
 ACCENT   = RGBColor(0x2C, 0x6E, 0x49)   # forest green
-ACCENT2  = RGBColor(0x4A, 0xA8, 0x6C)   # lighter green
+ACCENT2  = RGBColor(0x5B, 0xBC, 0xDD)   # celeste
 LINE     = RGBColor(0xD1, 0xD1, 0xD1)   # subtle divider
 
 # ─── HELPERS ────────────────────────────────────────────────────────────────
@@ -137,10 +137,6 @@ add_text(s,
     "en un entorno de despliegue real sobre Ubuntu 22.04.",
     1.1, 4.25, 11, 1.3, 13, color=DARK)
 
-# accent quote block
-add_rect(s, 1.1, 5.8, 0.08, 0.9, ACCENT)
-add_text(s, "«Cada persona debería ser dueña de sus propios datos de bienestar.»",
-         1.35, 5.85, 10.5, 0.7, 12, italic=True, color=MID)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # SLIDE 4 – OBJETIVOS
@@ -457,34 +453,45 @@ add_rect(s, 0, 0, 0.5, 7.5, ACCENT)
 add_text(s, "11  Pruebas funcionales", 1.1, 0.45, 10, 0.7, 22, bold=True, color=DARK)
 add_line(s, 1.1, 1.25, 10.7, color=LINE)
 
-add_text(s, "14 casos de prueba documentados · todos superados ✓", 1.1, 1.5, 11, 0.5, 13,
+add_text(s, "25 tests de integración automatizados · todos superados ✓", 1.1, 1.5, 11, 0.5, 13,
          bold=True, color=ACCENT)
 
 test_cases = [
-    ("CP-01", "Registro de nuevo usuario con datos válidos"),
-    ("CP-02", "Registro con email duplicado — error esperado"),
-    ("CP-03", "Login con credenciales correctas"),
-    ("CP-04", "Login con contraseña incorrecta — error esperado"),
-    ("CP-05", "Acceso a ruta protegida sin sesión — redirección"),
-    ("CP-06", "Registro de estado de ánimo en fecha actual"),
-    ("CP-07", "Visualización del historial de ánimo"),
-    ("CP-08", "Eliminación de una entrada de historial"),
-    ("CP-09", "Registro de hábito · guardado inmediato"),
-    ("CP-10", "Actualización de hábito ya registrado (upsert)"),
-    ("CP-11", "Visualización de hábitos del día actual"),
-    ("CP-12", "Actualización de datos de perfil"),
-    ("CP-13", "Cambio de contraseña con verificación correcta"),
-    ("CP-14", "Logout · invalidación de sesión"),
+    ("T-01", "Registro de usuario → 201"),
+    ("T-02", "Email duplicado → 400"),
+    ("T-03", "Registro sin campos → 400"),
+    ("T-04", "Login correcto → cookie JWT"),
+    ("T-05", "Contraseña incorrecta → 400"),
+    ("T-06", "Usuario no existe → 400"),
+    ("T-07", "Login sin contraseña → 400"),
+    ("T-08", "GET /api/me sin token → 401"),
+    ("T-09", "GET /api/me con sesión → 200"),
+    ("T-10", "Logout · limpia cookie"),
+    ("T-11", "GET /api/users/logs sin token → 401"),
+    ("T-12", "POST /api/users/moods sin token → 401"),
+    ("T-13", "GET /api/habits sin token → 401"),
+    ("T-14", "GET /api/habits → catálogo con opciones"),
+    ("T-15", "POST moods → entrada creada 201"),
+    ("T-16", "GET logs → historial del usuario"),
+    ("T-17", "POST moods sin campos → 400"),
+    ("T-18", "DELETE mood propio → 200"),
+    ("T-19", "DELETE mood inexistente → 404"),
+    ("T-20", "POST habits/logs → hábito registrado 201"),
+    ("T-21", "Upsert: mismo hábito mismo día → 201"),
+    ("T-22", "GET habits/logs/date → hábitos del día"),
+    ("T-23", "POST habits/logs sin campos → 400"),
+    ("T-24", "GET /api/users/profile → 200"),
+    ("T-25", "PUT /api/users/profile → datos actualizados"),
 ]
 
-cols2 = [test_cases[:7], test_cases[7:]]
+cols2 = [test_cases[:13], test_cases[13:]]
 for ci, col in enumerate(cols2):
     x = 1.1 + ci * 6
     for i, (code, desc) in enumerate(col):
-        y = 2.2 + i * 0.6
-        add_text(s, code, x, y, 0.9, 0.52, 9.5, bold=True, color=ACCENT)
-        add_text(s, desc, x + 0.9, y, 5, 0.52, 10.5, color=DARK)
-        add_text(s, "✓", x + 5.9, y, 0.4, 0.52, 10, bold=True,
+        y = 2.2 + i * 0.35
+        add_text(s, code, x, y, 0.9, 0.32, 8.5, bold=True, color=ACCENT)
+        add_text(s, desc, x + 0.9, y, 5, 0.32, 9.5, color=DARK)
+        add_text(s, "✓", x + 5.9, y, 0.4, 0.32, 9, bold=True,
                  color=ACCENT, align=PP_ALIGN.CENTER)
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -501,7 +508,7 @@ conclusions = [
     "Los 5 módulos del ciclo DAW quedan integrados de forma coherente en un único proyecto real.",
     "El sistema implementa las mejores prácticas de seguridad web: JWT, bcrypt, parameterized queries y HTTPS.",
     "La arquitectura en tres capas facilita el mantenimiento y la escalabilidad futura.",
-    "Los 14 casos de prueba validados demuestran la robustez y corrección de todas las funcionalidades.",
+    "Los 25 tests de integración automatizados validan todos los endpoints de la API y los flujos críticos.",
 ]
 add_text(s, "Logros", 1.1, 1.5, 8, 0.4, 13, bold=True, color=DARK)
 for i, c in enumerate(conclusions):
@@ -542,6 +549,6 @@ add_text(s, "¿Preguntas?",
          1.1, 4.6, 11, 0.6, 16, color=DARK, align=PP_ALIGN.CENTER)
 
 # ─── SAVE ────────────────────────────────────────────────────────────────────
-output = "/home/mbalay19/mindtracker-copy/MindTracker_Presentacion.pptx"
+output = "/home/mbalay19/DAW_PROYECTO/MindTracker_Presentacion.pptx"
 prs.save(output)
 print(f"Saved: {output}")

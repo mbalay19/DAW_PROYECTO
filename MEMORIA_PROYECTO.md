@@ -177,7 +177,7 @@ El proyecto se desarrolló en un período aproximado de doce semanas. La siguien
 
 **Debilidades**
 - Proyecto individual: no hay revisión de código por pares, lo que aumenta el riesgo de introducir errores no detectados.
-- Ausencia de pruebas automatizadas (unitarias o de integración), lo que implica dependencia exclusiva de pruebas manuales.
+- Cobertura de pruebas limitada al nivel de integración de API: no se implementaron pruebas unitarias sobre los modelos ni pruebas de interfaz de usuario.
 - El despliegue actual sobre WSL no es una arquitectura de producción estándar.
 
 **Amenazas**
@@ -560,7 +560,9 @@ El virtualhost de Apache define dos bloques: uno para el puerto 80 que redirige 
 
 ## 8.4 Pruebas funcionales
 
-Las pruebas se realizaron mediante pruebas de caja negra sobre la interfaz web y sobre la API directamente mediante cURL. Para cada caso de uso principal se definieron casos de prueba con los siguientes parámetros: precondiciones, datos de entrada, resultado esperado y resultado obtenido.
+Las pruebas se organizaron en dos niveles. En primer lugar, una suite de 25 pruebas de integración automatizadas implementadas con `node:test` (el runner nativo de Node.js v20) y `supertest` como cliente HTTP contra Express. Los tests se ejecutan con `npm test` y crean un usuario con email único generado dinámicamente en cada ejecución para evitar conflictos entre ejecuciones. La suite cubre los flujos de autenticación (registro, login, sesión y logout), operaciones CRUD sobre estados de ánimo, registro y consulta de hábitos, y gestión del perfil de usuario.
+
+Complementariamente, se realizaron pruebas manuales de caja negra sobre la interfaz web y sobre la API directamente mediante cURL. Para cada caso de uso principal se definieron casos de prueba con los siguientes parámetros: precondiciones, datos de entrada, resultado esperado y resultado obtenido.
 
 ---
 
@@ -744,7 +746,7 @@ El estado actual de MindTracker cubre el flujo esencial de registro y consulta d
 
 **Hábitos personalizados**: actualmente el catálogo de hábitos está fijo en la base de datos. Permitir que cada usuario defina sus propios hábitos con sus propias opciones añadiría una capa de personalización muy relevante.
 
-**Pruebas automatizadas**: la ausencia de una suite de pruebas automatizadas es la deuda técnica más significativa del proyecto actual. La implementación de pruebas unitarias sobre los modelos y pruebas de integración sobre los endpoints de la API, utilizando herramientas como Vitest o Jest con supertest, reduciría considerablemente el riesgo de regresiones al añadir nuevas funcionalidades.
+**Pruebas unitarias sobre los modelos**: la suite de integración actual valida el comportamiento de la API a nivel de endpoint, pero no cubre las funciones internas de los modelos de forma aislada. Añadir pruebas unitarias sobre las operaciones de base de datos reduciría el tiempo de diagnóstico ante regresiones futuras.
 
 **Despliegue en contenedores**: la containerización de los tres servicios (Node.js, MariaDB, Apache) mediante Docker Compose simplificaría el despliegue en cualquier entorno y eliminaría la dependencia de WSL.
 
