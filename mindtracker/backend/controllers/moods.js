@@ -50,10 +50,13 @@ export async function loginUser (req, res) {
       { expiresIn: '1d' }
     )
 
+    // httpOnly para que no se pueda leer desde javascript (evita XSS)
     res.cookie('jwt', token, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000
     })
+
+    console.log('login:', email)
 
     return res.json({
       success: true,
@@ -70,7 +73,7 @@ export async function addMood (req, res) {
     const { mood, notes, date } = req.body
 
     if (!mood || !notes || !date) {
-      return res.status(400).json({ error: 'Todos los campos deben estar completos' })
+      return res.status(400).json({ error: 'Faltan campos por completar' })
     }
 
     const userId = req.user.id
@@ -94,7 +97,6 @@ export async function addMood (req, res) {
   }
 }
 
-// TODO: añadir paginación cuando haya muchos registros
 export async function getLogs (req, res) {
   try {
     const userId = req.user.id
@@ -218,8 +220,8 @@ export async function changePassword (req, res) {
     const hashed = await bcrypt.hash(newPassword, 10)
     await UserModel.updatePassword({ id: req.user.id, hashedPassword: hashed })
     return res.json({ message: 'Contraseña actualizada correctamente' })
-  } catch (error) {
-    console.error('Error changing password:', error)
+  } catch (err) {
+    console.error('Error changing password:', err)
     return res.status(500).json({ error: 'Internal server error' })
   }
 }

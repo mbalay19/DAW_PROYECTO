@@ -36,13 +36,14 @@ app.use((req, res, next) => {
 app.use('/', moodRouter)
 app.use('/', habitRouter)
 
+// si no coincide con ninguna ruta de la api, devuelve el index.html
+// para que react router gestione la navegacion en el cliente
 app.get(/.*/, (req, res) => {
   res.sendFile(path.join(DIST, 'index.html'))
 })
 
 export { app }
 
-// solo escucha si es el punto de entrada, no cuando se importa desde tests
 if (process.argv[1] === __filename) {
   const PORT = process.env.PORT ?? 2345
   app.listen(PORT, () => {

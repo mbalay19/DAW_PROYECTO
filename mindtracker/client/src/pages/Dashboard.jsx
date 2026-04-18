@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const TODAY = new Date().toISOString().split('T')[0]
 
@@ -128,33 +128,34 @@ function RegistrosView () {
   const [habitLogsByDate, setHabitLogsByDate] = useState({})
   const [loading, setLoading] = useState(true)
 
-  const load = useCallback(async () => {
-    setLoading(true)
-    try {
-      const [moodRes, habitRes] = await Promise.all([
-        fetch('/api/users/logs', { credentials: 'include' }),
-        fetch('/api/habits/logs', { credentials: 'include' })
-      ])
-      if (moodRes.ok) {
-        const data = await moodRes.json()
-        setLogs(data.log ?? [])
+  useEffect(() => {
+    async function load () {
+      setLoading(true)
+      try {
+        const [moodRes, habitRes] = await Promise.all([
+          fetch('/api/users/logs', { credentials: 'include' }),
+          fetch('/api/habits/logs', { credentials: 'include' })
+        ])
+        if (moodRes.ok) {
+          const data = await moodRes.json()
+          setLogs(data.log ?? [])
+        }
+        if (habitRes.ok) {
+          const habitLogs = await habitRes.json()
+          const byDate = {}
+          habitLogs.forEach(hl => {
+            const d = new Date(hl.date).toISOString().split('T')[0]
+            if (!byDate[d]) byDate[d] = []
+            byDate[d].push(hl)
+          })
+          setHabitLogsByDate(byDate)
+        }
+      } finally {
+        setLoading(false)
       }
-      if (habitRes.ok) {
-        const habitLogs = await habitRes.json()
-        const byDate = {}
-        habitLogs.forEach(hl => {
-          const d = new Date(hl.date).toISOString().split('T')[0]
-          if (!byDate[d]) byDate[d] = []
-          byDate[d].push(hl)
-        })
-        setHabitLogsByDate(byDate)
-      }
-    } finally {
-      setLoading(false)
     }
+    load()
   }, [])
-
-  useEffect(() => { load() }, [load])
 
   async function handleDelete (id) {
     const res = await fetch(`/api/users/moods/${id}`, { method: 'DELETE', credentials: 'include' })
@@ -422,17 +423,21 @@ function HabitsPanel ({ date }) {
                 <span>{habit.name}</span>
               </div>
               <div className='habit-options'>
-                {habit.options.map(opt => (
-                  <button
-                    key={opt.id}
-                    type='button'
-                    className={`habit-opt-btn ${Number(selected[habit.id]) === Number(opt.id) ? 'selected' : ''}`}
-                    onClick={() => handleSelect(habit.id, opt.id)}
-                    disabled={saving === habit.id}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
+                {habit.options.map(opt => {
+                  // mariadb devuelve los ids como bigint, hay que convertir para comparar
+                  const activo = Number(selected[habit.id]) === Number(opt.id)
+                  return (
+                    <button
+                      key={opt.id}
+                      type='button'
+                      className={`habit-opt-btn ${activo ? 'selected' : ''}`}
+                      onClick={() => handleSelect(habit.id, opt.id)}
+                      disabled={saving === habit.id}
+                    >
+                      {opt.label}
+                    </button>
+                  )
+                })}
               </div>
             </div>
           ))}

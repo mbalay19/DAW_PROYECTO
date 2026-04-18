@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
+// el pool reutiliza conexiones en vez de abrir una nueva por peticion
 const pool = mariadb.createPool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -80,7 +81,8 @@ export async function initializeDatabase () {
 
     await seedHabits(conn)
 
-    console.log('Base de datos inicializada correctamente')
+    // solo imprime la primera vez que se arranca, después las tablas ya existen
+    console.log('DB lista')
   } catch (error) {
     console.error('Error inicializando la base de datos:', error)
     throw error
@@ -209,13 +211,9 @@ export class UserModel {
   }
 
   static async updatePassword ({ id, hashedPassword }) {
-    let conn
-    try {
-      conn = await pool.getConnection()
-      await conn.query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, id])
-    } finally {
-      if (conn) conn.release()
-    }
+    const conn = await pool.getConnection()
+    await conn.query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, id])
+    conn.release()
   }
 }
 
@@ -278,16 +276,15 @@ export class MoodModel {
   }
 
   static async countByUser ({ userId }) {
-    let conn
+    const conn = await pool.getConnection()
     try {
-      conn = await pool.getConnection()
-      const result = await conn.query(
+      const [row] = await conn.query(
         'SELECT COUNT(*) as count FROM moods WHERE userId = ?',
         [userId]
       )
-      return Number(result[0].count)
+      return Number(row.count)
     } finally {
-      if (conn) conn.release()
+      conn.release()
     }
   }
 
@@ -371,7 +368,6 @@ export class HabitModel {
 }
 
 export class HabitLogModel {
-  // usa upsert para no duplicar entradas del mismo dia
   static async upsert ({ userId, habitId, habitOptionId, date }) {
     let conn
     try {
@@ -456,16 +452,15 @@ export class HabitLogModel {
   }
 
   static async deleteById ({ id, userId }) {
-    let conn
+    const conn = await pool.getConnection()
     try {
-      conn = await pool.getConnection()
       const result = await conn.query(
         'DELETE FROM habit_logs WHERE id = ? AND userId = ?',
         [id, userId]
       )
       return result.affectedRows > 0
     } finally {
-      if (conn) conn.release()
+      conn.release()
     }
   }
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const EMAIL_RE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export default function Login ({ onLogin }) {
   const [tab, setTab] = useState('login')
