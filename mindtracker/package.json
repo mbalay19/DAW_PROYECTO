@@ -19,14 +19,14 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mariadb": "^3.2.0",
-    "standard": "17.1.2"
+    "mariadb": "^3.2.0"
   },
   "eslintConfig": {
     "extends": "standard"
   },
   "devDependencies": {
     "nodemon": "^3.1.11",
+    "standard": "17.1.2",
     "supertest": "^7.2.2"
   }
 }

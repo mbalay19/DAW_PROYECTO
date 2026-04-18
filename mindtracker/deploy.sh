@@ -29,7 +29,7 @@ fi
 # Verificar Node.js
 if ! command_exists node; then
     echo "Instalando Node.js..."
-    curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
     apt install -y nodejs
 fi
 
@@ -77,7 +77,7 @@ chmod -R 755 /var/www/html/mindtracker
 echo "Configurando base de datos MariaDB..."
 mysql -u root << EOF
 CREATE DATABASE IF NOT EXISTS mindtracker;
-CREATE USER IF NOT EXISTS 'mindtracker_user'@'localhost' IDENTIFIED BY '#Matias17';
+CREATE USER IF NOT EXISTS 'mindtracker_user'@'localhost' IDENTIFIED BY 'TU_CONTRASEÑA_AQUI';
 GRANT ALL PRIVILEGES ON mindtracker.* TO 'mindtracker_user'@'localhost';
 FLUSH PRIVILEGES;
 EOF
