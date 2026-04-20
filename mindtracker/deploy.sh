@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Script de despliegue para MindTracker con Apache
-# Ejecutar con permisos de administrador
+# Ejecutar con sudo
+# Importante antes del Deploy cambiar contraseña de user para BBDD aqui: 'TU_CONTRASEÑA_AQUI' (Linea 81)
 
 echo "=== MindTracker Deployment Script ==="
 
