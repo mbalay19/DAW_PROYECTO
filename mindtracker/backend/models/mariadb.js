@@ -281,6 +281,25 @@ export class MoodModel {
   }
 
   /**
+   * Busca el registro de mood de un usuario para una fecha concreta.
+   * @param {{ userId: number, date: string }} param0
+   * @returns {Promise<Object|null>}
+   */
+  static async findByUserAndDate ({ userId, date }) {
+    let conn
+    try {
+      conn = await pool.getConnection()
+      const rows = await conn.query(
+        'SELECT * FROM moods WHERE userId = ? AND date = ?',
+        [userId, date]
+      )
+      return rows[0] || null
+    } finally {
+      if (conn) conn.release()
+    }
+  }
+
+  /**
    * Obtiene los registros de mood de un usuario con filtros opcionales.
    * @param {{ userId: number, from: string, to: string, limit: number }} param0
    * @returns {Promise<Object[]>}

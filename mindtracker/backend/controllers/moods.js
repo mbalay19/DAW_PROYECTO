@@ -82,6 +82,7 @@ export async function loginUser (req, res) {
 
 /**
  * Añade un nuevo registro de estado de ánimo para el usuario autenticado.
+ * Si ya existe un registro para esa fecha lo elimina antes de crear el nuevo.
  * @param {Object} req - body: { mood, notes, date }
  * @param {Object} res
  * @returns {Promise<void>}
@@ -99,6 +100,12 @@ export async function addMood (req, res) {
     const user = await UserModel.findById(userId)
     if (!user) {
       return res.status(404).json({ error: 'Usuario no encontrado' })
+    }
+
+    // si ya hay un registro para ese dia lo borramos antes de crear el nuevo
+    const existing = await MoodModel.findByUserAndDate({ userId, date })
+    if (existing) {
+      await MoodModel.deleteById({ id: existing.id, userId })
     }
 
     const moodCreated = await MoodModel.create({ userId, mood, notes, date })
