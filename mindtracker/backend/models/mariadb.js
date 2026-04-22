@@ -15,6 +15,10 @@ const pool = mariadb.createPool({
   allowPublicKeyRetrieval: true
 })
 
+/**
+ * Crea las tablas necesarias si no existen y rellena los hábitos iniciales.
+ * @returns {Promise<void>}
+ */
 export async function initializeDatabase () {
   let conn
   try {
@@ -145,6 +149,11 @@ async function seedHabits (conn) {
 }
 
 export class UserModel {
+  /**
+   * Crea un nuevo usuario hasheando la contraseña antes de guardarla.
+   * @param {{ name: string, lastName: string, telephone: string, email: string, password: string }} param0
+   * @returns {Promise<Object>} usuario creado (sin contraseña)
+   */
   static async create ({ name, lastName, telephone, email, password }) {
     let conn
     try {
@@ -167,6 +176,11 @@ export class UserModel {
     }
   }
 
+  /**
+   * Busca un usuario por email, devuelve null si no existe.
+   * @param {string} email
+   * @returns {Promise<Object|null>}
+   */
   static async findByEmail (email) {
     let conn
     try {
@@ -178,6 +192,10 @@ export class UserModel {
     }
   }
 
+  /**
+   * @param {number} id
+   * @returns {Promise<Object|null>}
+   */
   static async findById (id) {
     let conn
     try {
@@ -192,10 +210,20 @@ export class UserModel {
     }
   }
 
+  /**
+   * Compara la contraseña en texto plano con el hash guardado en la BD.
+   * @param {string} plainPassword
+   * @param {string} hashedPassword
+   * @returns {Promise<boolean>}
+   */
   static async verifyPassword (plainPassword, hashedPassword) {
     return await bcrypt.compare(plainPassword, hashedPassword)
   }
 
+  /**
+   * @param {{ id: number, name: string, lastName: string, telephone?: string }} param0
+   * @returns {Promise<Object>} usuario actualizado
+   */
   static async updateProfile ({ id, name, lastName, telephone }) {
     let conn
     try {
@@ -210,6 +238,10 @@ export class UserModel {
     }
   }
 
+  /**
+   * @param {{ id: number, hashedPassword: string }} param0
+   * @returns {Promise<void>}
+   */
   static async updatePassword ({ id, hashedPassword }) {
     const conn = await pool.getConnection()
     await conn.query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, id])
@@ -218,6 +250,11 @@ export class UserModel {
 }
 
 export class MoodModel {
+  /**
+   * Inserta un nuevo registro de estado de ánimo.
+   * @param {{ userId: number, mood: number, notes: string, date: string }} param0
+   * @returns {Promise<Object>} registro creado
+   */
   static async create ({ userId, mood, notes, date }) {
     let conn
     try {
@@ -243,6 +280,11 @@ export class MoodModel {
     }
   }
 
+  /**
+   * Obtiene los registros de mood de un usuario con filtros opcionales.
+   * @param {{ userId: number, from?: string, to?: string, limit?: number }} param0
+   * @returns {Promise<Object[]>}
+   */
   static async getLogsByUser ({ userId, from, to, limit }) {
     let conn
     try {
@@ -275,6 +317,10 @@ export class MoodModel {
     }
   }
 
+  /**
+   * @param {{ userId: number }} param0
+   * @returns {Promise<number>} total de registros del usuario
+   */
   static async countByUser ({ userId }) {
     const conn = await pool.getConnection()
     try {
@@ -288,6 +334,11 @@ export class MoodModel {
     }
   }
 
+  /**
+   * Actualiza un registro de mood. Devuelve null si no existe o no pertenece al usuario.
+   * @param {{ id: number, userId: number, mood: number, notes: string, date: string }} param0
+   * @returns {Promise<Object|null>}
+   */
   static async updateById ({ id, userId, mood, notes, date }) {
     let conn
     try {
@@ -314,6 +365,10 @@ export class MoodModel {
     }
   }
 
+  /**
+   * @param {{ id: number, userId: number }} param0
+   * @returns {Promise<boolean>} true si se eliminó, false si no existía
+   */
   static async deleteById ({ id, userId }) {
     let conn
     try {
@@ -330,6 +385,10 @@ export class MoodModel {
 }
 
 export class HabitModel {
+  /**
+   * Devuelve todos los hábitos con sus opciones incluidas.
+   * @returns {Promise<Object[]>}
+   */
   static async getAll () {
     let conn
     try {
@@ -347,6 +406,10 @@ export class HabitModel {
     }
   }
 
+  /**
+   * @param {number} id
+   * @returns {Promise<Object|null>} hábito con sus opciones, o null si no existe
+   */
   static async getById (id) {
     let conn
     try {
@@ -368,6 +431,11 @@ export class HabitModel {
 }
 
 export class HabitLogModel {
+  /**
+   * Inserta o actualiza el log de un hábito para una fecha (ON DUPLICATE KEY UPDATE).
+   * @param {{ userId: number, habitId: number, habitOptionId: number, date: string }} param0
+   * @returns {Promise<Object|null>} log resultante con los datos del hábito y la opción
+   */
   static async upsert ({ userId, habitId, habitOptionId, date }) {
     let conn
     try {
@@ -395,6 +463,10 @@ export class HabitLogModel {
     }
   }
 
+  /**
+   * @param {{ userId: number, from?: string, to?: string }} param0
+   * @returns {Promise<Object[]>}
+   */
   static async getLogsByUser ({ userId, from, to }) {
     let conn
     try {
@@ -430,6 +502,10 @@ export class HabitLogModel {
     }
   }
 
+  /**
+   * @param {{ userId: number, date: string }} param0
+   * @returns {Promise<Object[]>}
+   */
   static async getLogsByUserAndDate ({ userId, date }) {
     let conn
     try {
@@ -451,6 +527,10 @@ export class HabitLogModel {
     }
   }
 
+  /**
+   * @param {{ id: number, userId: number }} param0
+   * @returns {Promise<boolean>}
+   */
   static async deleteById ({ id, userId }) {
     const conn = await pool.getConnection()
     try {

@@ -3,6 +3,13 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
+/**
+ * Middleware que verifica el token JWT guardado en la cookie.
+ * Si el token es válido añade req.user con los datos del usuario.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ */
 export function verifyToken (req, res, next) {
   const token = req.cookies?.jwt
   if (!token) {
