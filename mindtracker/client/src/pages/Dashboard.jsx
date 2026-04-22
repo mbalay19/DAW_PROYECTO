@@ -374,6 +374,7 @@ function PasswordForm () {
 
 function HabitsPanel ({ date }) {
   const [habits, setHabits] = useState([])
+  // selected: { [habitId]: { optionId, logId } }
   const [selected, setSelected] = useState({})
   const [saving, setSaving] = useState(null)
 
@@ -388,21 +389,43 @@ function HabitsPanel ({ date }) {
       .then(res => res.ok ? res.json() : [])
       .then(logs => {
         const map = {}
-        logs.forEach(l => { map[l.habitId] = l.habitOptionId })
+        logs.forEach(l => { map[l.habitId] = { optionId: l.habitOptionId, logId: l.id } })
         setSelected(map)
       })
   }, [date])
 
   async function handleSelect (habitId, habitOptionId) {
+    const current = selected[habitId]
+    // mariadb devuelve los ids como bigint, hay que convertir para comparar
+    const yaSeleccionado = current && Number(current.optionId) === Number(habitOptionId)
+
     setSaving(habitId)
     try {
-      const res = await fetch('/api/habits/logs', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ habitId, habitOptionId, date }),
-        credentials: 'include'
-      })
-      if (res.ok) setSelected(prev => ({ ...prev, [habitId]: habitOptionId }))
+      if (yaSeleccionado) {
+        // si clickas la opcion ya activa, la borramos
+        const res = await fetch(`/api/habits/logs/${current.logId}`, {
+          method: 'DELETE',
+          credentials: 'include'
+        })
+        if (res.ok) {
+          setSelected(prev => {
+            const next = { ...prev }
+            delete next[habitId]
+            return next
+          })
+        }
+      } else {
+        const res = await fetch('/api/habits/logs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ habitId, habitOptionId, date }),
+          credentials: 'include'
+        })
+        if (res.ok) {
+          const data = await res.json()
+          setSelected(prev => ({ ...prev, [habitId]: { optionId: habitOptionId, logId: data.id } }))
+        }
+      }
     } finally {
       setSaving(null)
     }
@@ -424,8 +447,8 @@ function HabitsPanel ({ date }) {
               </div>
               <div className='habit-options'>
                 {habit.options.map(opt => {
-                  // mariadb devuelve los ids como bigint, hay que convertir para comparar
-                  const activo = Number(selected[habit.id]) === Number(opt.id)
+                  const current = selected[habit.id]
+                  const activo = current && Number(current.optionId) === Number(opt.id)
                   return (
                     <button
                       key={opt.id}

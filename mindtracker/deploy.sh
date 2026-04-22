@@ -59,10 +59,12 @@ a2ensite mindtracker.conf
 # Deshabilitar sitio por defecto (opcional)
 a2dissite 000-default
 
-# Crear directorio de la aplicación
+# Crear directorios necesarios
 mkdir -p /var/www/html/mindtracker
+mkdir -p /var/log/pm2
 
 # Copiar archivos de la aplicación
+rm -rf /var/www/html/mindtracker/frontend
 cp -r ./client/dist /var/www/html/mindtracker/frontend
 cp -r ./backend /var/www/html/mindtracker/
 cp ./package.json /var/www/html/mindtracker/
@@ -76,9 +78,10 @@ chmod -R 755 /var/www/html/mindtracker
 
 # Configurar base de datos
 echo "Configurando base de datos MariaDB..."
+DB_PASS=$(grep '^DB_PASSWORD=' ./.env | cut -d'=' -f2- | tr -d '"')
 mysql -u root << EOF
 CREATE DATABASE IF NOT EXISTS mindtracker;
-CREATE USER IF NOT EXISTS 'mindtracker_user'@'localhost' IDENTIFIED BY 'TU_CONTRASEÑA_AQUI';
+CREATE USER IF NOT EXISTS 'mindtracker_user'@'localhost' IDENTIFIED BY '${DB_PASS}';
 GRANT ALL PRIVILEGES ON mindtracker.* TO 'mindtracker_user'@'localhost';
 FLUSH PRIVILEGES;
 EOF
@@ -91,7 +94,7 @@ npm install --production
 # Configurar PM2 para manejar la aplicación Node.js
 echo "Configurando PM2..."
 pm2 delete mindtracker 2>/dev/null || true  # Eliminar proceso existente si existe
-pm2 start App.js --name "mindtracker" --log /var/log/pm2/mindtracker.log
+pm2 start App.js --name "mindtracker"
 
 # Configurar PM2 para iniciarse con el sistema
 pm2 startup
