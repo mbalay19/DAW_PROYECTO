@@ -94,7 +94,7 @@ npm install --production
 # Configurar PM2 para manejar la aplicación Node.js
 echo "Configurando PM2..."
 pm2 delete mindtracker 2>/dev/null || true  # Eliminar proceso existente si existe
-pm2 start App.js --name "mindtracker"
+pm2 start /var/www/html/mindtracker/App.js --name "mindtracker" --cwd /var/www/html/mindtracker
 
 # Configurar PM2 para iniciarse con el sistema
 pm2 startup

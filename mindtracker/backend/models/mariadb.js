@@ -193,6 +193,7 @@ export class UserModel {
   }
 
   /**
+   * Busca un usuario por id, devuelve null si no existe.
    * @param {number} id
    * @returns {Promise<Object|null>}
    */
@@ -221,6 +222,7 @@ export class UserModel {
   }
 
   /**
+   * Actualiza nombre, apellidos y teléfono del usuario.
    * @param {{ id: number, name: string, lastName: string, telephone: string }} param0
    * @returns {Promise<Object>} usuario actualizado
    */
@@ -239,6 +241,7 @@ export class UserModel {
   }
 
   /**
+   * Reemplaza el hash de contraseña del usuario.
    * @param {{ id: number, hashedPassword: string }} param0
    * @returns {Promise<void>}
    */
@@ -337,6 +340,7 @@ export class MoodModel {
   }
 
   /**
+   * Devuelve el número total de registros de mood del usuario.
    * @param {{ userId: number }} param0
    * @returns {Promise<number>} total de registros del usuario
    */
@@ -385,6 +389,7 @@ export class MoodModel {
   }
 
   /**
+   * Elimina un registro de mood. Devuelve false si no existe o no pertenece al usuario.
    * @param {{ id: number, userId: number }} param0
    * @returns {Promise<boolean>} true si se eliminó, false si no existía
    */
@@ -483,6 +488,7 @@ export class HabitLogModel {
   }
 
   /**
+   * Devuelve los logs de hábitos del usuario con filtro opcional por rango de fechas.
    * @param {{ userId: number, from: string, to: string }} param0
    * @returns {Promise<Object[]>}
    */
@@ -522,6 +528,7 @@ export class HabitLogModel {
   }
 
   /**
+   * Devuelve los logs de hábitos del usuario para una fecha específica.
    * @param {{ userId: number, date: string }} param0
    * @returns {Promise<Object[]>}
    */
@@ -547,6 +554,7 @@ export class HabitLogModel {
   }
 
   /**
+   * Elimina un log de hábito. Devuelve false si no existe o no pertenece al usuario.
    * @param {{ id: number, userId: number }} param0
    * @returns {Promise<boolean>}
    */

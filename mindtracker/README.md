@@ -14,7 +14,7 @@ Desarrollada como Proyecto Integrado del ciclo DAW (2º curso, 2025-2026).
 ## Funcionalidades
 
 - Registro e inicio de sesión con email y contraseña
-- Registro diario del estado de ánimo (escala 1-10 + notas)
+- Registro diario del estado de ánimo (escala 0-10 + notas)
 - Seguimiento de 5 hábitos: sueño, deporte, lectura, estudio, alimentación
 - Historial de registros con etiquetas de hábitos por día
 - Edición de perfil y cambio de contraseña
@@ -54,6 +54,25 @@ npm run dev
 ```
 
 La app queda disponible en `http://localhost:2345`.
+
+## Despliegue en producción
+
+Requiere ejecutar como `root` en una máquina con Debian/Ubuntu:
+
+```bash
+sudo ./deploy.sh
+```
+
+El script instala y configura Apache 2.4, MariaDB, Node.js y PM2, copia los archivos
+a `/var/www/html/mindtracker/` y arranca la aplicación con PM2.
+
+La app queda disponible en `http://mindtracker.local`.
+
+Para ver los logs de la aplicación:
+
+```bash
+sudo pm2 logs mindtracker
+```
 
 ## Estructura
 

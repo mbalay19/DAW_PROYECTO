@@ -1,3 +1,7 @@
+/**
+ * @file Punto de entrada de Express. Configura middlewares, rutas y sirve el frontend compilado.
+ */
+
 import express, { json } from 'express'
 import cookieParser from 'cookie-parser'
 import { moodRouter } from './backend/routes/moods.js'
