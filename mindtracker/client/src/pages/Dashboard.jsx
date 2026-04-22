@@ -110,14 +110,15 @@ function AppHeader ({ user, onLogout, onNavigate, activeView }) {
 
 function EntradaView () {
   const [date, setDate] = useState(TODAY)
+  const [habitReset, setHabitReset] = useState(0)
 
   return (
     <div className='dashboard-body'>
       <div className='dashboard-left'>
-        <MoodForm date={date} setDate={setDate} />
+        <MoodForm date={date} setDate={setDate} onSaved={() => setHabitReset(k => k + 1)} />
       </div>
       <div className='dashboard-right'>
-        <HabitsPanel date={date} />
+        <HabitsPanel date={date} resetKey={habitReset} />
       </div>
     </div>
   )
@@ -372,7 +373,7 @@ function PasswordForm () {
   )
 }
 
-function HabitsPanel ({ date }) {
+function HabitsPanel ({ date, resetKey }) {
   const [habits, setHabits] = useState([])
   // selected: { [habitId]: { optionId, logId } }
   const [selected, setSelected] = useState({})
@@ -393,6 +394,11 @@ function HabitsPanel ({ date }) {
         setSelected(map)
       })
   }, [date])
+
+  // cuando se guarda el mood del día limpiamos la selección visual
+  useEffect(() => {
+    if (resetKey > 0) setSelected({})
+  }, [resetKey])
 
   async function handleSelect (habitId, habitOptionId) {
     const current = selected[habitId]
@@ -469,7 +475,7 @@ function HabitsPanel ({ date }) {
   )
 }
 
-function MoodForm ({ date, setDate }) {
+function MoodForm ({ date, setDate, onSaved }) {
   const [mood, setMood] = useState(null)
   const [notes, setNotes] = useState('')
   const [error, setError] = useState('')
@@ -495,6 +501,7 @@ function MoodForm ({ date, setDate }) {
         setMood(null)
         setNotes('')
         setSuccess(true)
+        onSaved()
         setTimeout(() => setSuccess(false), 2500)
       } else {
         setError(data.error || 'Error al guardar.')
