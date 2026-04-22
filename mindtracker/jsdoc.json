@@ -1,0 +1,19 @@
+{
+  "source": {
+    "include": [
+      "App.js",
+      "backend/controllers",
+      "backend/models",
+      "backend/middleware",
+      "backend/routes"
+    ],
+    "includePattern": ".+\\.js$",
+    "excludePattern": "(node_modules|client|tests)"
+  },
+  "opts": {
+    "destination": "docs",
+    "recurse": true,
+    "readme": "README.md"
+  },
+  "plugins": ["plugins/markdown"]
+}

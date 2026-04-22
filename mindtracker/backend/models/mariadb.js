@@ -221,7 +221,7 @@ export class UserModel {
   }
 
   /**
-   * @param {{ id: number, name: string, lastName: string, telephone?: string }} param0
+   * @param {{ id: number, name: string, lastName: string, telephone: string }} param0
    * @returns {Promise<Object>} usuario actualizado
    */
   static async updateProfile ({ id, name, lastName, telephone }) {
@@ -282,7 +282,7 @@ export class MoodModel {
 
   /**
    * Obtiene los registros de mood de un usuario con filtros opcionales.
-   * @param {{ userId: number, from?: string, to?: string, limit?: number }} param0
+   * @param {{ userId: number, from: string, to: string, limit: number }} param0
    * @returns {Promise<Object[]>}
    */
   static async getLogsByUser ({ userId, from, to, limit }) {
@@ -464,7 +464,7 @@ export class HabitLogModel {
   }
 
   /**
-   * @param {{ userId: number, from?: string, to?: string }} param0
+   * @param {{ userId: number, from: string, to: string }} param0
    * @returns {Promise<Object[]>}
    */
   static async getLogsByUser ({ userId, from, to }) {

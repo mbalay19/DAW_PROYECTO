@@ -4,8 +4,8 @@ import jwt from 'jsonwebtoken'
 
 /**
  * Registra un nuevo usuario en la base de datos.
- * @param {import('express').Request} req - body: { name, lastName, telephone, email, password }
- * @param {import('express').Response} res
+ * @param {Object} req - body: { name, lastName, telephone, email, password }
+ * @param {Object} res
  * @returns {Promise<void>}
  */
 export async function createUser (req, res) {
@@ -35,8 +35,8 @@ export async function createUser (req, res) {
 
 /**
  * Autentica al usuario y devuelve una cookie JWT si las credenciales son correctas.
- * @param {import('express').Request} req - body: { email, password }
- * @param {import('express').Response} res
+ * @param {Object} req - body: { email, password }
+ * @param {Object} res
  * @returns {Promise<void>}
  */
 export async function loginUser (req, res) {
@@ -82,8 +82,8 @@ export async function loginUser (req, res) {
 
 /**
  * Añade un nuevo registro de estado de ánimo para el usuario autenticado.
- * @param {import('express').Request} req - body: { mood, notes, date }
- * @param {import('express').Response} res
+ * @param {Object} req - body: { mood, notes, date }
+ * @param {Object} res
  * @returns {Promise<void>}
  */
 export async function addMood (req, res) {
@@ -117,8 +117,8 @@ export async function addMood (req, res) {
 
 /**
  * Devuelve todos los registros de mood del usuario. Admite filtros por fecha y límite.
- * @param {import('express').Request} req - query: { from?, to?, limit? }
- * @param {import('express').Response} res
+ * @param {Object} req - query: { from?, to?, limit? }
+ * @param {Object} res
  * @returns {Promise<void>}
  */
 export async function getLogs (req, res) {
@@ -153,8 +153,8 @@ export async function getLogs (req, res) {
 
 /**
  * Actualiza un registro de mood existente del usuario autenticado.
- * @param {import('express').Request} req - params: { id }, body: { mood, notes, date }
- * @param {import('express').Response} res
+ * @param {Object} req - params: { id }, body: { mood, notes, date }
+ * @param {Object} res
  * @returns {Promise<void>}
  */
 export async function updateMood (req, res) {
@@ -187,8 +187,8 @@ export async function updateMood (req, res) {
 
 /**
  * Elimina un registro de mood por id (solo si pertenece al usuario).
- * @param {import('express').Request} req - params: { id }
- * @param {import('express').Response} res
+ * @param {Object} req - params: { id }
+ * @param {Object} res
  * @returns {Promise<void>}
  */
 export async function deleteMood (req, res) {
@@ -211,8 +211,8 @@ export async function deleteMood (req, res) {
 
 /**
  * Devuelve los datos del perfil del usuario autenticado.
- * @param {import('express').Request} req
- * @param {import('express').Response} res
+ * @param {Object} req
+ * @param {Object} res
  * @returns {Promise<void>}
  */
 export async function getProfile (req, res) {
@@ -234,8 +234,8 @@ export async function getProfile (req, res) {
 
 /**
  * Actualiza nombre, apellidos y teléfono del usuario autenticado.
- * @param {import('express').Request} req - body: { name, lastName, telephone? }
- * @param {import('express').Response} res
+ * @param {Object} req - body: { name, lastName, telephone? }
+ * @param {Object} res
  * @returns {Promise<void>}
  */
 export async function updateProfile (req, res) {
@@ -254,8 +254,8 @@ export async function updateProfile (req, res) {
 
 /**
  * Cambia la contraseña del usuario verificando primero la actual.
- * @param {import('express').Request} req - body: { currentPassword, newPassword }
- * @param {import('express').Response} res
+ * @param {Object} req - body: { currentPassword, newPassword }
+ * @param {Object} res
  * @returns {Promise<void>}
  */
 export async function changePassword (req, res) {

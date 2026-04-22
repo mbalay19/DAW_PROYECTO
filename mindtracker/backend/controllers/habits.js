@@ -2,8 +2,8 @@ import { HabitModel, HabitLogModel } from '../models/mariadb.js'
 
 /**
  * Devuelve la lista de hábitos disponibles con sus opciones.
- * @param {import('express').Request} req
- * @param {import('express').Response} res
+ * @param {Object} req
+ * @param {Object} res
  * @returns {Promise<void>}
  */
 export async function getHabits (req, res) {
@@ -18,8 +18,8 @@ export async function getHabits (req, res) {
 
 /**
  * Registra o actualiza el log de un hábito para una fecha concreta (upsert).
- * @param {import('express').Request} req - body: { habitId, habitOptionId, date }
- * @param {import('express').Response} res
+ * @param {Object} req - body: { habitId, habitOptionId, date }
+ * @param {Object} res
  * @returns {Promise<void>}
  */
 export async function logHabit (req, res) {
@@ -53,8 +53,8 @@ export async function logHabit (req, res) {
 
 /**
  * Devuelve los logs de hábitos del usuario, con filtro opcional por rango de fechas.
- * @param {import('express').Request} req - query: { from?, to? }
- * @param {import('express').Response} res
+ * @param {Object} req - query: { from?, to? }
+ * @param {Object} res
  * @returns {Promise<void>}
  */
 export async function getHabitLogs (req, res) {
@@ -71,8 +71,8 @@ export async function getHabitLogs (req, res) {
 
 /**
  * Devuelve los logs de hábitos del usuario para una fecha específica.
- * @param {import('express').Request} req - params: { date }
- * @param {import('express').Response} res
+ * @param {Object} req - params: { date }
+ * @param {Object} res
  * @returns {Promise<void>}
  */
 export async function getHabitLogsByDate (req, res) {
@@ -89,8 +89,8 @@ export async function getHabitLogsByDate (req, res) {
 
 /**
  * Elimina un log de hábito por id (solo si pertenece al usuario autenticado).
- * @param {import('express').Request} req - params: { id }
- * @param {import('express').Response} res
+ * @param {Object} req - params: { id }
+ * @param {Object} res
  * @returns {Promise<void>}
  */
 export async function deleteHabitLog (req, res) {
