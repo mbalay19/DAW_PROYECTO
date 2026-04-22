@@ -304,33 +304,33 @@ function ProfileForm ({ user, onUserUpdate }) {
 }
 
 function PasswordForm () {
-  const [form, setForm] = useState({ currentPassword: '', newPassword: '', confirm: '' })
+  const [actual, setActual] = useState('')
+  const [nueva, setNueva] = useState('')
+  const [confirmar, setConfirmar] = useState('')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
-
-  function set (field) {
-    return e => setForm(prev => ({ ...prev, [field]: e.target.value }))
-  }
 
   async function handleSubmit (e) {
     e.preventDefault()
     setError('')
     setSuccess('')
-    if (form.newPassword !== form.confirm) { setError('Las contraseñas no coinciden.'); return }
-    if (form.newPassword.length < 6) { setError('Mínimo 6 caracteres.'); return }
+    if (nueva !== confirmar) { setError('Las contraseñas no coinciden.'); return }
+    if (nueva.length < 6) { setError('Mínimo 6 caracteres.'); return }
     setSaving(true)
     try {
       const res = await fetch('/api/users/password', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ currentPassword: form.currentPassword, newPassword: form.newPassword }),
+        body: JSON.stringify({ currentPassword: actual, newPassword: nueva }),
         credentials: 'include'
       })
       const data = await res.json()
       if (res.ok) {
         setSuccess('Contraseña actualizada.')
-        setForm({ currentPassword: '', newPassword: '', confirm: '' })
+        setActual('')
+        setNueva('')
+        setConfirmar('')
         setTimeout(() => setSuccess(''), 2500)
       } else {
         setError(data.error || 'Error al cambiar la contraseña.')
@@ -351,15 +351,15 @@ function PasswordForm () {
         <form onSubmit={handleSubmit} noValidate>
           <div className='form-field'>
             <label htmlFor='pw-current'>Contraseña actual</label>
-            <input id='pw-current' type='password' value={form.currentPassword} onChange={set('currentPassword')} placeholder='········' />
+            <input id='pw-current' type='password' value={actual} onChange={e => setActual(e.target.value)} placeholder='········' />
           </div>
           <div className='form-field'>
             <label htmlFor='pw-new'>Nueva contraseña</label>
-            <input id='pw-new' type='password' value={form.newPassword} onChange={set('newPassword')} placeholder='Mínimo 6 caracteres' />
+            <input id='pw-new' type='password' value={nueva} onChange={e => setNueva(e.target.value)} placeholder='Mínimo 6 caracteres' />
           </div>
           <div className='form-field'>
             <label htmlFor='pw-confirm'>Confirmar nueva contraseña</label>
-            <input id='pw-confirm' type='password' value={form.confirm} onChange={set('confirm')} placeholder='········' />
+            <input id='pw-confirm' type='password' value={confirmar} onChange={e => setConfirmar(e.target.value)} placeholder='········' />
           </div>
           {error && <p className='form-error'>{error}</p>}
           {success && <p className='form-success'>{success}</p>}
