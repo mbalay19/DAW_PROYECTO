@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon ./App.js",
     "test": "node --test",
-    "start": "node ./App.js",
+    "start": "node ./server.js",
     "docs": "jsdoc -c jsdoc.json"
   },
   "keywords": [],
